@@ -1,0 +1,100 @@
+[
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/register",
+    "description": "Create a new user",
+    "example": {
+      "name": "",
+      "email": "",
+      "nim": "",
+      "phone": "",
+      "password": ""
+    }
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/login",
+    "description": "Login user",
+    "example": {
+      "email": "",
+      "password": ""
+    }
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/logout",
+    "description": "Logout user",
+    "example": ""
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/user/profile",
+    "description": "Show user profile",
+    "example": ""
+  },
+  {
+    "method": "PUT",
+    "endpoint": "/api/v1/user/profile",
+    "description": "Edit user profile",
+    "example": {
+      "name": "",
+      "email": "",
+      "nim": "",
+      "phone": "",
+      "password": ""
+    }
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/events",
+    "description": "View list event",
+    "example": ""
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/events/{id}",
+    "description": "View detail event by id",
+    "example": ""
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/events/{id}/register",
+    "description": "Register event for user",
+    "example": {
+      "user_id": "",
+      "event_id": "",
+      "registration_time": "automatic from API"
+    }
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/user/events",
+    "description": "View list event user regist",
+    "example": ""
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/attendance/check-in",
+    "description": "Attendance for event",
+    "example": {
+      "user_id": "",
+      "event_id": "",
+      "qr_code_value": ""
+    }
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/v1/attendance/check-out",
+    "description": "Attendance for event",
+    "example": {
+      "user_id": "",
+      "event_id": ""
+    }
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/v1/attendance/history",
+    "description": "View list attendance history event",
+    "example": ""
+  }
+]

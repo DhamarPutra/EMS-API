@@ -1,0 +1,907 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "EMS API Documentation",
+        "description": "Dokumentasi API untuk event management system:<br>Auth: Register, Login, dan Logout<br>Event: daftar event, detail event, pendaftaran user<br>Attendance: check-in, check-out, dan riwayat",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Server utama API EMS"
+        }
+    ],
+    "paths": {
+        "/api/v1/attendance/check-in": {
+            "post": {
+                "tags": [
+                    "Attendance"
+                ],
+                "summary": "Melakukan check-in ke event",
+                "description": "User melakukan check-in dengan QR code untuk event tertentu.",
+                "operationId": "438f1046261525c5db6b32818df8c7e8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "event_id",
+                                    "qr_code_value"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "description": "ID user yang melakukan check-in",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "event_id": {
+                                        "description": "ID event yang diikuti",
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "qr_code_value": {
+                                        "description": "Nilai QR code unik event",
+                                        "type": "string",
+                                        "example": "EVT2025-USER01"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Check-in berhasil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Checked in"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "user_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "event_id": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "check_in_time": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2025-10-16T09:00:00Z"
+                                                },
+                                                "qr_code_value": {
+                                                    "type": "string",
+                                                    "example": "EVT2025-USER01"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validasi gagal"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/attendance/check-out": {
+            "post": {
+                "tags": [
+                    "Attendance"
+                ],
+                "summary": "Melakukan check-out dari event",
+                "description": "User melakukan check-out dari event yang sudah diikuti.",
+                "operationId": "8036eaf758a73a517bff4863728ba79a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "event_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "event_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Check-out berhasil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Checked out"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data absensi tidak ditemukan"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/attendance/history": {
+            "get": {
+                "tags": [
+                    "Attendance"
+                ],
+                "summary": "Melihat riwayat absensi user",
+                "description": "Mengambil semua data absensi (check-in & check-out) milik user yang sedang login.",
+                "operationId": "8170da430227d361ae10adb33dad913f",
+                "responses": {
+                    "200": {
+                        "description": "Daftar riwayat absensi user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 10
+                                            },
+                                            "event_id": {
+                                                "type": "integer",
+                                                "example": 5
+                                            },
+                                            "check_in_time": {
+                                                "type": "string",
+                                                "format": "datetime",
+                                                "example": "2025-10-16T09:00:00Z"
+                                            },
+                                            "check_out_time": {
+                                                "type": "string",
+                                                "format": "datetime",
+                                                "example": "2025-10-16T17:00:00Z"
+                                            },
+                                            "event": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Laravel Dev Conference 2025"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register user baru",
+                "description": "Mendaftarkan akun baru ke sistem.",
+                "operationId": "367c504562e58b94c3b1a357c41eb8fd",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "nim",
+                                    "phone",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "example": "Damar Setiawan"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "damar@example.com"
+                                    },
+                                    "nim": {
+                                        "type": "string",
+                                        "example": "1201234567"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "+628123456789"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "minLength": 6,
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Registrasi berhasil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Damar Setiawan"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "damar@example.com"
+                                                },
+                                                "nim": {
+                                                    "type": "string",
+                                                    "example": "1201234567"
+                                                },
+                                                "phone": {
+                                                    "type": "string",
+                                                    "example": "+628123456789"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validasi gagal"
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Login user",
+                "description": "Login menggunakan email dan password untuk mendapatkan token autentikasi.",
+                "operationId": "2301b6c7bd6b340ac339c3d740b99030",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "damar@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login berhasil, token dikembalikan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "type": "string",
+                                            "example": "1|XyZabcTokenExample123456"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Email atau password salah",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Logout user",
+                "description": "Menghapus semua token autentikasi user yang sedang login.",
+                "operationId": "638db25ef12d6e2309d67aafd297ac95",
+                "responses": {
+                    "200": {
+                        "description": "Logout berhasil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Logged out"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/events": {
+            "get": {
+                "tags": [
+                    "Event"
+                ],
+                "summary": "Ambil semua event",
+                "description": "Mengembalikan daftar seluruh event yang tersedia.",
+                "operationId": "dab9a63dae8d07bcf96b2ccab9d4a08c",
+                "responses": {
+                    "200": {
+                        "description": "Daftar event",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "Laravel Developer Conference 2025"
+                                            },
+                                            "description": {
+                                                "type": "string",
+                                                "example": "Event tahunan untuk para developer Laravel."
+                                            },
+                                            "location": {
+                                                "type": "string",
+                                                "example": "Jakarta Convention Center"
+                                            },
+                                            "start_date": {
+                                                "type": "string",
+                                                "format": "date",
+                                                "example": "2025-11-01"
+                                            },
+                                            "end_date": {
+                                                "type": "string",
+                                                "format": "date",
+                                                "example": "2025-11-03"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/events/{id}": {
+            "get": {
+                "tags": [
+                    "Event"
+                ],
+                "summary": "Lihat detail event",
+                "description": "Mengambil detail lengkap dari event berdasarkan ID.",
+                "operationId": "1b3968b8db00da68b19911a6edf1ba81",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID event yang ingin dilihat",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail event ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Laravel Developer Conference 2025"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "example": "Event tahunan untuk para developer Laravel."
+                                        },
+                                        "location": {
+                                            "type": "string",
+                                            "example": "Jakarta Convention Center"
+                                        },
+                                        "start_date": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "example": "2025-11-01"
+                                        },
+                                        "end_date": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "example": "2025-11-03"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Event tidak ditemukan"
+                    }
+                }
+            }
+        },
+        "/api/v1/events/{id}/register": {
+            "post": {
+                "tags": [
+                    "Event"
+                ],
+                "summary": "Daftar ke event",
+                "description": "User yang sedang login melakukan pendaftaran ke event berdasarkan ID.",
+                "operationId": "f8ed3ae3bed686bdee8fbbb6f0589a2f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID event yang ingin didaftarkan",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pendaftaran event berhasil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Registered"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "user_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "event_id": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "registration_time": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2025-10-16T09:30:00Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Event tidak ditemukan"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/events/user-registered": {
+            "get": {
+                "tags": [
+                    "Event"
+                ],
+                "summary": "Daftar event yang diikuti user",
+                "description": "Mengambil semua event yang sudah didaftarkan oleh user yang sedang login.",
+                "operationId": "5d8357f78f38fc06274ca5fa51d8f39e",
+                "responses": {
+                    "200": {
+                        "description": "Daftar event user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 10
+                                            },
+                                            "event_id": {
+                                                "type": "integer",
+                                                "example": 5
+                                            },
+                                            "registration_time": {
+                                                "type": "string",
+                                                "format": "datetime",
+                                                "example": "2025-10-16T09:30:00Z"
+                                            },
+                                            "event": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Laravel Developer Conference 2025"
+                                                    },
+                                                    "location": {
+                                                        "type": "string",
+                                                        "example": "Jakarta Convention Center"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/profile": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Ambil profil user yang sedang login",
+                "description": "Mengembalikan data profil user yang sedang login berdasarkan token autentikasi.",
+                "operationId": "cc344fec551903e2b2cbc6f5d5fa7b5f",
+                "responses": {
+                    "200": {
+                        "description": "Data profil user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Damar"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "example": "damar@example.com"
+                                        },
+                                        "phone": {
+                                            "type": "string",
+                                            "example": "+628123456789"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "datetime",
+                                            "example": "2025-10-16T09:00:00Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/update-profile": {
+            "put": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update profil user",
+                "description": "Memperbarui data profil user seperti nama dan nomor telepon.",
+                "operationId": "f53ccb591303131db6695422ff4027e1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "example": "Damar Setiawan"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "maxLength": 15,
+                                        "example": "+628123456789"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Profil berhasil diperbarui",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Damar Setiawan"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "example": "damar@example.com"
+                                        },
+                                        "phone": {
+                                            "type": "string",
+                                            "example": "+628123456789"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validasi gagal"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/change-password": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Ubah password user",
+                "description": "Mengganti password user dengan validasi password lama.",
+                "operationId": "51a9fe42c70c2d3e5689358712d06f93",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "old_password",
+                                    "new_password"
+                                ],
+                                "properties": {
+                                    "old_password": {
+                                        "type": "string",
+                                        "example": "oldpass123"
+                                    },
+                                    "new_password": {
+                                        "type": "string",
+                                        "minLength": 6,
+                                        "example": "newsecurepassword"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password berhasil diperbarui",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Password updated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Password lama salah",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Incorrect old password"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validasi gagal"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Attendance",
+            "description": "Attendance"
+        },
+        {
+            "name": "Authentication",
+            "description": "Authentication"
+        },
+        {
+            "name": "Event",
+            "description": "Event"
+        },
+        {
+            "name": "User",
+            "description": "User"
+        }
+    ]
+}
